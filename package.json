@@ -1,0 +1,27 @@
+{
+  "name": "hasana",
+  "version": "1.0.0",
+  "description": "This app for AZAKAR",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "start:dev": "node index.js",
+    "start:prod": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abdelhamid Salah",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.1",
+    "gridfs-stream": "^1.1.1",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.12.1",
+    "multer": "^1.4.4",
+    "multer-gridfs-storage": "^5.0.2",
+    "nodemon": "^3.1.9"
+  }
+}
