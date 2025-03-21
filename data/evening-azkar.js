@@ -140,7 +140,7 @@
         "count": 3,
         "description":"قُلْ هُوَ ٱللَّهُ أَحَدٌ (1) ٱللَّهُ ٱلصَّمَدُ (2) لَمْ يَلِدْ وَلَمْ يُولَدْ (3) وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ (4)",
         "category": "Azkar",
-        "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "audioUrl": "https://res.cloudinary.com/dtb8omfnm/video/upload/v1742312694/Untitled-video-Made-with-Clipchamp-_2__nzsg2v.mp3",
         "esnadname": "سورة الإخلاص",
         'thawapofzekr': 'من قالها حين يصبح وحين يمسى كفته من كل شىء (الإخلاص والمعوذتين).'
     },
@@ -347,7 +347,7 @@
         "count":100,
         "description":" أَسْتَغْفِرُ اللَّهَ",
         "category":"Azkar",
-        "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "audioUrl": "https://res.cloudinary.com/dtb8omfnm/video/upload/v1742312202/Untitled-video-Made-with-Clipchamp_pomqqy.mp3",
         "esnadname": "أخرجه العقيلي في الضعفاء (ص ٤١١)، وأبو نعيم في أخبار أصبهان (٦٠/١) من طريق الطبراني بسند صحيح، عَنْ أَبِي بُرْدَةَ بْن أَبِي مُوسَى، عَنْ أَبِيْهِ قَالَ : جَاءَ رَسُولُ اللَّهِ ﷺ وَنَحْنُ جُلُوسٌ فَقَالَ : مَا أَصْبَحْتُ غَدَاةً قَطُّ إِلَّا اسْتَغْفَرْتُ اللَّهُ فِيهَا مِئَةَ مَرَّةٍ .صححه الشيخ ناصر في السلسلة الصحيحة (١٦٠٠)، وفي صحيح الجامع (٥٤١٠)",
       },
 ],
