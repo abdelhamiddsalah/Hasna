@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const connectDB = require('./config/database');
 const helmet = require('helmet');
 const cors = require('cors');
+const ApiError = require('./Utils/api-error');
 
 dotenv.config();
 // Connect to MongoDB
@@ -19,18 +20,21 @@ app.use(cors());
 
 // Routes
 app.use("/api/v1/morningazkar", require("./routes/morning-azkar-route"));
+app.use("/api/v1", require("./routes/prayerstimers-route")); // ✅ تعديل هنا
 
+// خطأ 404 لأي مسار غير موجود
 app.all("*", (req, res, next) => {
-    next(new Apierror(`Can't find ${req.originalUrl} on this server!`, 404));
+    next(new ApiError(`Can't find ${req.originalUrl} on this server!`, 404)); // ✅ إصلاح هنا
 });
 
-
+// تشغيل السيرفر
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`1Server started on port ${port}`);
+    console.log(`🚀 Server started on port ${port}`);
 });
 
+// التعامل مع الأخطاء الغير متوقعة
 process.on('unhandledRejection', (err) => {
-    console.error(err);
+    console.error("Unhandled Rejection:", err);
     process.exit(1);
 });

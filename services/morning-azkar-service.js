@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const Azkar = require("../models/azkar-model");
 const asyncHandler = require("express-async-handler");
-const Apierror = require("../utiels/api-error");
+const Apierror = require("../Utils/api-error");
 
 const getallmorningazkarRoute = asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
