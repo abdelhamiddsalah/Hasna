@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const Azkar = require("../models/azkar-model");
+const Azkar = require("../models/morning-azkar");
 const asyncHandler = require("express-async-handler");
 const Apierror = require("../Utils/api-error");
 
