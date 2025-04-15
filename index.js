@@ -19,7 +19,7 @@ app.use(helmet());
 app.use(cors());
 
 // Routes
-app.use("/api/v1/morningazkar", require("./routes/morning-azkar-route"));
+app.use("/api/v1", require("./routes/morning-azkar-route"));
 app.use("/api/v1/eveningazkar", require("./routes/evening-azkar-route"));
 app.use("/api/v1", require("./routes/prayerstimers-route")); // ✅ تعديل هنا
 
