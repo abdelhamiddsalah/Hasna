@@ -6,6 +6,6 @@ const {
     getallmorningazkarRoute
 } = require('../services/morning-azkar-service');
 
-router.get('/morningazkar', getallmorningazkarRoute);
+router.get('/', getallmorningazkarRoute);
 
 module.exports = router;
