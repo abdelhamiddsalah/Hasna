@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const azkarSchema = new mongoose.Schema({
+const eveningazkarSchema = new mongoose.Schema({
     id:{
         type: String,
         required: false
@@ -35,4 +35,4 @@ const azkarSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Azkar', azkarSchema);
+module.exports = mongoose.model('eveningAzkar', eveningazkarSchema, 'eveningAzkar');
