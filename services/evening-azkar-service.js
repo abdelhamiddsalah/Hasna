@@ -16,21 +16,9 @@ const getalleveningazkarRoute = asyncHandler(async (req, res, next) => {
         return next(new Apierror("لا توجد أذكار متاحة!", 404));
     }
 
-    // قراءة رقم الصفحة من الطلب (إذا لم يُحدد، تكون الصفحة 1)
-    let page = parseInt(req.query.page) || 1;
-
-    // التأكد أن الصفحة لا تتجاوز عدد الأذكار
-    if (page > eveningazkar.length) {
-        page = 1; // إعادة التدوير للصفحة الأولى
-    }
-
-    // اختيار الذكر بناءً على رقم الصفحة (الترتيب من 1 إلى آخر ذكر)
-    const zekr = eveningazkar[page - 1];
-
-    // إرجاع الذكر مع معلومات الصفحة
+    // إرجاع كل الأذكار
     res.status(200).json({
-        zekr,
-        currentPage: page,
+        azkar: eveningazkar,
         totalAzkar: eveningazkar.length
     });
 });
