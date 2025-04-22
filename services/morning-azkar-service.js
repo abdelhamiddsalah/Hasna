@@ -9,17 +9,16 @@ const getallmorningazkarRoute = asyncHandler(async (req, res, next) => {
         return next(new Apierror(errors.array()[0].msg, 400));
     }
 
-    // جلب كل الأذكار من قاعدة البيانات دفعة واحدة
-    const morningazkar = await Azkar.find();
+    // جلب الأذكار وترتيبها حسب id
+    const morningazkar = await Azkar.find().sort({ id: 1 });
 
     if (!morningazkar || morningazkar.length === 0) {
         return next(new Apierror("لا توجد أذكار متاحة!", 404));
     }
 
-    // إرجاع جميع الأذكار مع العدد الكلي للأذكار
     res.status(200).json({
-        azkar: morningazkar,  // إرسال جميع الأذكار
-        totalAzkar: morningazkar.length // إرسال العدد الكلي للأذكار
+        azkar: morningazkar,
+        totalAzkar: morningazkar.length
     });
 });
 
