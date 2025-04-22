@@ -32,6 +32,5 @@ const beforeSleepSchema = new mongoose.Schema({
 });
 
 
-module.exports = {
-    BeforeSleepModel: mongoose.model("BeforeSleep", beforeSleepSchema,"BeforeSleep")
-    }
+module.exports =  mongoose.model("BeforeSleep", beforeSleepSchema,"BeforeSleep")
+    
