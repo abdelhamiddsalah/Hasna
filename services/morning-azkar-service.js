@@ -10,7 +10,7 @@ const getallmorningazkarRoute = asyncHandler(async (req, res, next) => {
     }
 
     // جلب الأذكار وترتيبها حسب id
-    const morningazkar = await Azkar.find().sort({ id: 1 });
+    const morningazkar = await Azkar.find();
 
     if (!morningazkar || morningazkar.length === 0) {
         return next(new Apierror("لا توجد أذكار متاحة!", 404));
