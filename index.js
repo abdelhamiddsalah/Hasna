@@ -1,13 +1,11 @@
 const express = require("express");
 const dotenv = require("dotenv");
-
-const connectDB = require('./config/database');
-const helmet = require('helmet');
-const cors = require('cors');
-const ApiError = require('./Utils/api-error');
+const helmet = require("helmet");
+const cors = require("cors");
+const connectDB = require("./config/database");
+const ApiError = require("./Utils/api-error");
 
 dotenv.config();
-// Connect to MongoDB
 connectDB();
 
 const app = express();
@@ -22,20 +20,20 @@ app.use(cors());
 app.use("/api/v1/morningazkar", require("./routes/morning-azkar-route"));
 app.use("/api/v1/eveningazkar", require("./routes/evening-azkar-route"));
 app.use("/api/v1/beforesleepazkar", require("./routes/before-sleep-route"));
-app.use("/api/v1", require("./routes/prayerstimers-route")); // ✅ تعديل هنا
+app.use("/api/v1", require("./routes/prayerstimers-route"));
 
-// خطأ 404 لأي مسار غير موجود
+// 404 handler
 app.all("*", (req, res, next) => {
-    next(new ApiError(`Can't find ${req.originalUrl} on this server!`, 404)); // ✅ إصلاح هنا
+    next(new ApiError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// تشغيل السيرفر
+// Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`🚀 Server started on port ${port}`);
 });
 
-// التعامل مع الأخطاء الغير متوقعة
+// Unhandled promise rejections
 process.on('unhandledRejection', (err) => {
     console.error("Unhandled Rejection:", err);
     process.exit(1);

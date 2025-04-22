@@ -1,12 +1,15 @@
+// seeder.js
 const dotenv = require('dotenv');
 dotenv.config();
 
 const connectToDb = require('./config/database');
 const MorningAzkarModel = require('./models/morning-azkar');
 const EveningAzkarModel = require('./models/evening-azkar');
+const BeforeSleepAzkarModel = require('./models/before-sleep');
 
 const morningAzkarData = require('./data/morning-azkar');
 const eveningAzkarData = require('./data/evening-azkar');
+const beforeSleepAzkarData = require('./data/before-sleep-azkar');
 
 connectToDb();
 
@@ -34,10 +37,23 @@ const importEveningAzkar = async () => {
     }
 };
 
+const importBeforeSleepAzkar = async () => {
+    try {
+        await BeforeSleepAzkarModel.deleteMany({});
+        await BeforeSleepAzkarModel.insertMany(beforeSleepAzkarData);
+        console.log('✅ Before Sleep Azkar imported successfully');
+        process.exit();
+    } catch (error) {
+        console.error('❌ Error importing before sleep azkar:', error);
+        process.exit(1);
+    }
+};
+
 const destroyAzkar = async () => {
     try {
         await MorningAzkarModel.deleteMany({});
         await EveningAzkarModel.deleteMany({});
+        await BeforeSleepAzkarModel.deleteMany({});
         console.log('🗑️ All Azkar destroyed successfully');
         process.exit();
     } catch (error) {
@@ -52,9 +68,11 @@ if (arg === '-import-morning') {
     importMorningAzkar();
 } else if (arg === '-import-evening') {
     importEveningAzkar();
+} else if (arg === '-import-before-sleep') {
+    importBeforeSleepAzkar();
 } else if (arg === '-destroy') {
     destroyAzkar();
 } else {
-    console.log('❗ Use one of: -import-morning | -import-evening | -destroy');
+    console.log('❗ Use one of: -import-morning | -import-evening | -import-before-sleep | -destroy');
     process.exit();
 }
