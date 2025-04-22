@@ -18,7 +18,7 @@ const getallbeforesleepRoute = asyncHandler(async (req, res, next) => {
 
     // إرجاع كل الأذكار
     res.status(200).json({
-        azkar: eveningazkar,
+        azkar: beforesleepazkar,
         totalAzkar: beforesleepazkar.length
     });
 });
