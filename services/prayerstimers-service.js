@@ -1,16 +1,15 @@
 const axios = require("axios");
-
 const API_URL = "http://api.aladhan.com/v1/timingsByCity";
 
 const getallprayerstimersRoute = async (req, res) => {
     try {
         const { city = "Cairo", country = "EG" } = req.query;
-
+        
         // جلب مواقيت الصلاة من API
         const response = await axios.get(API_URL, {
             params: { city, country, method: 5 },
         });
-
+        
         // الحصول على مواعيد الصلاة من البيانات المستلمة
         const timings = response.data.data.timings;
         const prayerTimes = {
@@ -20,76 +19,65 @@ const getallprayerstimersRoute = async (req, res) => {
             maghrib: timings.Maghrib,
             isha: timings.Isha,
         };
-
-        // دالة لتحويل الوقت إلى كائن Date (24 ساعة) للمقارنة
-        const convertTo24Hour = (timeString) => {
-            const [hour, minute] = timeString.split(":");
-            return new Date(1970, 0, 1, hour, minute); // نعود إلى تاريخ ثابت مع الوقت المحدد
+        
+        // تحويل الوقت الحالي إلى ساعات ودقائق فقط
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTimeMinutes = currentHour * 60 + currentMinute;
+        
+        // تحويل وقت الصلاة إلى دقائق منذ منتصف الليل للمقارنة
+        const convertToMinutes = (timeString) => {
+            const [hour, minute] = timeString.split(":").map(Number);
+            return hour * 60 + minute;
         };
-
-        // تحديد الوقت الحالي
-        const currentTime = new Date();
-
-        // تحويل مواعيد الصلاة إلى كائنات Date
-        const timesArray = [
-            { name: "الفجر", time: convertTo24Hour(prayerTimes.fajr) },
-            { name: "الظهر", time: convertTo24Hour(prayerTimes.dhuhr) },
-            { name: "العصر", time: convertTo24Hour(prayerTimes.asr) },
-            { name: "المغرب", time: convertTo24Hour(prayerTimes.maghrib) },
-            { name: "العشاء", time: convertTo24Hour(prayerTimes.isha) },
+        
+        // تحويل مواعيد الصلاة إلى دقائق
+        const prayers = [
+            { name: "الفجر", time: convertToMinutes(prayerTimes.fajr) },
+            { name: "الظهر", time: convertToMinutes(prayerTimes.dhuhr) },
+            { name: "العصر", time: convertToMinutes(prayerTimes.asr) },
+            { name: "المغرب", time: convertToMinutes(prayerTimes.maghrib) },
+            { name: "العشاء", time: convertToMinutes(prayerTimes.isha) }
         ];
-
-        let previousPrayer = null;
-        let nextPrayer = null;
-
-        // تحديد الصلاة السابقة والقادمة بناءً على الوقت الحالي
-        for (let i = 0; i < timesArray.length; i++) {
-            const currentPrayer = timesArray[i];
-            if (currentTime < currentPrayer.time) {
-                nextPrayer = currentPrayer;
-                if (i > 0) {
-                    previousPrayer = timesArray[i - 1];
+        
+        let previousPrayer = { name: "لا توجد صلاة سابقة" };
+        let nextPrayer = { name: "لا توجد صلاة قادمة" };
+        
+        // حالة خاصة: إذا كان الوقت بعد العشاء وقبل الفجر
+        if (currentTimeMinutes > prayers[4].time || currentTimeMinutes < prayers[0].time) {
+            previousPrayer = { name: "العشاء" };
+            nextPrayer = { name: "الفجر" };
+        } else {
+            // البحث عن الصلاة السابقة والقادمة
+            for (let i = 0; i < prayers.length; i++) {
+                if (currentTimeMinutes < prayers[i].time) {
+                    // الصلاة القادمة هي التي لم يحن وقتها بعد
+                    nextPrayer = { name: prayers[i].name };
+                    
+                    // الصلاة السابقة هي السابقة للصلاة القادمة، إلا إذا كانت القادمة هي الفجر
+                    if (i > 0) {
+                        previousPrayer = { name: prayers[i-1].name };
+                    } else {
+                        previousPrayer = { name: "العشاء" }; // إذا كانت القادمة هي الفجر، فالسابقة هي العشاء (من اليوم السابق)
+                    }
+                    break;
                 }
-                break;
+            }
+            
+            // إذا تجاوزنا كل الصلوات، فإن الصلاة السابقة هي آخر صلاة وهي العشاء
+            if (nextPrayer.name === "لا توجد صلاة قادمة") {
+                previousPrayer = { name: prayers[prayers.length - 1].name };
+                nextPrayer = { name: prayers[0].name }; // والقادمة هي الفجر (من اليوم التالي)
             }
         }
-
-        // إذا كان الوقت بين المغرب والعشاء
-        if (currentTime >= timesArray[3].time && currentTime < timesArray[4].time) {
-            previousPrayer = { name: "المغرب" }; // الصلاة السابقة هي المغرب
-            nextPrayer = { name: "العشاء" }; // الصلاة القادمة هي العشاء
-        }
-
-        // إذا كان الوقت بين العصر والمغرب
-        if (currentTime >= timesArray[2].time && currentTime < timesArray[3].time) {
-            previousPrayer = { name: "العصر" }; // الصلاة السابقة هي العصر
-            nextPrayer = { name: "المغرب" }; // الصلاة القادمة هي المغرب
-        }
-
-        // إذا كان الوقت بين الفجر والظهر
-        if (currentTime >= timesArray[0].time && currentTime < timesArray[1].time) {
-            previousPrayer = { name: "الفجر" }; // الصلاة السابقة هي الفجر
-            nextPrayer = { name: "الظهر" }; // الصلاة القادمة هي الظهر
-        }
-
-        // إذا كان الوقت بين الظهر والعصر
-        if (currentTime >= timesArray[1].time && currentTime < timesArray[2].time) {
-            previousPrayer = { name: "الظهر" }; // الصلاة السابقة هي الظهر
-            nextPrayer = { name: "العصر" }; // الصلاة القادمة هي العصر
-        }
-
-        // إذا كانت الصلاة القادمة بعد أذان الفجر
-        if (!nextPrayer) {
-            nextPrayer = timesArray[0];
-        }
-
+        
         // إرسال البيانات إلى العميل
         res.status(200).json({
             azkar: prayerTimes,
-            previousPrayer: previousPrayer ? previousPrayer.name : "لا توجد صلاة سابقة",
-            nextPrayer: nextPrayer ? nextPrayer.name : "لا توجد صلاة قادمة",
+            previousPrayer: previousPrayer.name,
+            nextPrayer: nextPrayer.name,
         });
-
     } catch (error) {
         console.error("Error fetching prayer times:", error);
         res.status(500).json({ error: "حدث خطأ أثناء جلب مواقيت الصلاة" });
