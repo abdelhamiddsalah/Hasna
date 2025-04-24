@@ -15,38 +15,35 @@ const getallprayerstimersRoute = async (req, res) => {
         const timings = response.data.data.timings;
         const prayerTimes = {
             fajr: timings.Fajr,
-            sunrise: timings.Sunrise,
             dhuhr: timings.Dhuhr,
             asr: timings.Asr,
             maghrib: timings.Maghrib,
             isha: timings.Isha,
         };
 
+        // دالة لتحويل الوقت إلى 24 ساعة
+        const convertTo24Hour = (timeString) => {
+            const [hour, minute] = timeString.split(":");
+            return parseInt(hour);
+        };
+
         // تحديد الوقت الحالي
         const currentTime = new Date();
         const currentTimeString = currentTime.toISOString().slice(0, 19).replace("T", " ");
 
-        // دالة لتحويل الوقت إلى 24 ساعة
-        const convertTo24Hour = (timeString) => {
-            const [hour, minute] = timeString.split(":");
-            const amPm = timeString.includes("PM") ? 12 : 0;
-            return parseInt(hour) + amPm;
-        };
-
         // تحديد الصلاة السابقة والقادمة
         const timesArray = [
-            { name: "fajr", time: convertTo24Hour(prayerTimes.fajr) },
-            { name: "sunrise", time: convertTo24Hour(prayerTimes.sunrise) },
-            { name: "dhuhr", time: convertTo24Hour(prayerTimes.dhuhr) },
-            { name: "asr", time: convertTo24Hour(prayerTimes.asr) },
-            { name: "maghrib", time: convertTo24Hour(prayerTimes.maghrib) },
-            { name: "isha", time: convertTo24Hour(prayerTimes.isha) },
+            { name: "الفجر", time: convertTo24Hour(prayerTimes.fajr) },
+            { name: "الظهر", time: convertTo24Hour(prayerTimes.dhuhr) },
+            { name: "العصر", time: convertTo24Hour(prayerTimes.asr) },
+            { name: "المغرب", time: convertTo24Hour(prayerTimes.maghrib) },
+            { name: "العشاء", time: convertTo24Hour(prayerTimes.isha) },
         ];
 
-        // العثور على الصلاة السابقة والقادمة
         let previousPrayer = null;
         let nextPrayer = null;
 
+        // تحديد الصلاة السابقة والقادمة بناءً على الوقت الحالي
         for (let i = 0; i < timesArray.length; i++) {
             const currentPrayer = timesArray[i];
             if (currentTime < new Date(prayerTimes[currentPrayer.name])) {
@@ -56,6 +53,30 @@ const getallprayerstimersRoute = async (req, res) => {
                 }
                 break;
             }
+        }
+
+        // التحقق إذا كان الوقت بين المغرب والعشاء
+        if (currentTime >= new Date(prayerTimes.maghrib) && currentTime < new Date(prayerTimes.isha)) {
+            previousPrayer = { name: "المغرب" }; // الصلاة السابقة هي المغرب
+            nextPrayer = { name: "العشاء" }; // الصلاة القادمة هي العشاء
+        }
+
+        // التحقق إذا كان الوقت بين العصر والمغرب
+        if (currentTime >= new Date(prayerTimes.asr) && currentTime < new Date(prayerTimes.maghrib)) {
+            previousPrayer = { name: "العصر" }; // الصلاة السابقة هي العصر
+            nextPrayer = { name: "المغرب" }; // الصلاة القادمة هي المغرب
+        }
+
+        // التحقق إذا كان الوقت بين الفجر والظهر
+        if (currentTime >= new Date(prayerTimes.fajr) && currentTime < new Date(prayerTimes.dhuhr)) {
+            previousPrayer = { name: "الفجر" }; // الصلاة السابقة هي الفجر
+            nextPrayer = { name: "الظهر" }; // الصلاة القادمة هي الظهر
+        }
+
+        // التحقق إذا كان الوقت بين الظهر والعصر
+        if (currentTime >= new Date(prayerTimes.dhuhr) && currentTime < new Date(prayerTimes.asr)) {
+            previousPrayer = { name: "الظهر" }; // الصلاة السابقة هي الظهر
+            nextPrayer = { name: "العصر" }; // الصلاة القادمة هي العصر
         }
 
         // إذا كانت الصلاة القادمة بعد أذان الفجر
