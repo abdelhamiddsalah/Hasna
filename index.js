@@ -21,6 +21,7 @@ app.use("/api/v1/morningazkar", require("./routes/morning-azkar-route"));
 app.use("/api/v1/eveningazkar", require("./routes/evening-azkar-route"));
 app.use("/api/v1/beforesleepazkar", require("./routes/before-sleep-route"));
 app.use("/api/v1/prayers", require("./routes/prayers-route"));
+app.use("/api/v1/afterprayazkar", require("./routes/after-pray-route"));
 app.use("/api/v1", require("./routes/prayerstimers-route"));
 
 // 404 handler

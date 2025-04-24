@@ -7,11 +7,14 @@ const MorningAzkarModel = require('./models/morning-azkar');
 const EveningAzkarModel = require('./models/evening-azkar');
 const BeforeSleepAzkarModel = require('./models/before-sleep');
 const PrayerModel = require('./models/prayers-model');
+const AfterPrayModel = require('./models/after-pray-model');
 
 const morningAzkarData = require('./data/morning-azkar');
 const eveningAzkarData = require('./data/evening-azkar');
 const beforeSleepAzkarData = require('./data/before-sleep-azkar');
 const prayerData = require('./data/prayers-data');
+const afterPrayData = require('./data/after-pray-data');
+
 
 connectToDb();
 
@@ -63,6 +66,18 @@ const importPrayers = async () => {
     }
 };
 
+const importAfterprayesazkar = async () => {
+    try {
+        await AfterPrayModel.deleteMany({});
+        await AfterPrayModel.insertMany(afterPrayData);
+        console.log('✅ Before Sleep Azkar imported successfully');
+        process.exit();
+    } catch (error) {
+        console.error('❌ Error importing before sleep azkar:', error);
+        process.exit(1);
+    }
+};
+
 
 const destroyAzkar = async () => {
     try {
@@ -70,6 +85,7 @@ const destroyAzkar = async () => {
         await EveningAzkarModel.deleteMany({});
         await BeforeSleepAzkarModel.deleteMany({});
         await PrayerModel.deleteMany({});
+        await AfterPrayModel.deleteMany({});
         console.log('🗑️ All Azkar destroyed successfully');
         process.exit();
     } catch (error) {
@@ -89,6 +105,8 @@ if (arg === '-import-morning') {
 } 
 else if (arg === '-import-prayers') {
     importPrayers();
+} else if (arg === '-import-after-prays-azkar') {
+    importAfterprayesazkar();
 } 
 
 else if (arg === '-destroy') {
