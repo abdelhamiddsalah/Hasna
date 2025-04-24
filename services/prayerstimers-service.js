@@ -21,7 +21,7 @@ const getallprayerstimersRoute = async (req, res) => {
             isha: timings.Isha,
         };
 
-        // دالة لتحويل الوقت إلى 24 ساعة
+        // دالة لتحويل الوقت إلى 24 ساعة (للمقارنة)
         const convertTo24Hour = (timeString) => {
             const [hour, minute] = timeString.split(":");
             return parseInt(hour);
@@ -29,9 +29,8 @@ const getallprayerstimersRoute = async (req, res) => {
 
         // تحديد الوقت الحالي
         const currentTime = new Date();
-        const currentTimeString = currentTime.toISOString().slice(0, 19).replace("T", " ");
 
-        // تحديد الصلاة السابقة والقادمة
+        // تحديد الصلاة السابقة والقادمة بناءً على الوقت الحالي
         const timesArray = [
             { name: "الفجر", time: convertTo24Hour(prayerTimes.fajr) },
             { name: "الظهر", time: convertTo24Hour(prayerTimes.dhuhr) },
@@ -46,7 +45,7 @@ const getallprayerstimersRoute = async (req, res) => {
         // تحديد الصلاة السابقة والقادمة بناءً على الوقت الحالي
         for (let i = 0; i < timesArray.length; i++) {
             const currentPrayer = timesArray[i];
-            if (currentTime < new Date(prayerTimes[currentPrayer.name])) {
+            if (currentTime < new Date(`1970-01-01T${prayerTimes[currentPrayer.name]}:00`)) {
                 nextPrayer = currentPrayer;
                 if (i > 0) {
                     previousPrayer = timesArray[i - 1];
@@ -56,25 +55,25 @@ const getallprayerstimersRoute = async (req, res) => {
         }
 
         // التحقق إذا كان الوقت بين المغرب والعشاء
-        if (currentTime >= new Date(prayerTimes.maghrib) && currentTime < new Date(prayerTimes.isha)) {
+        if (currentTime >= new Date(`1970-01-01T${prayerTimes.maghrib}:00`) && currentTime < new Date(`1970-01-01T${prayerTimes.isha}:00`)) {
             previousPrayer = { name: "المغرب" }; // الصلاة السابقة هي المغرب
             nextPrayer = { name: "العشاء" }; // الصلاة القادمة هي العشاء
         }
 
         // التحقق إذا كان الوقت بين العصر والمغرب
-        if (currentTime >= new Date(prayerTimes.asr) && currentTime < new Date(prayerTimes.maghrib)) {
+        if (currentTime >= new Date(`1970-01-01T${prayerTimes.asr}:00`) && currentTime < new Date(`1970-01-01T${prayerTimes.maghrib}:00`)) {
             previousPrayer = { name: "العصر" }; // الصلاة السابقة هي العصر
             nextPrayer = { name: "المغرب" }; // الصلاة القادمة هي المغرب
         }
 
         // التحقق إذا كان الوقت بين الفجر والظهر
-        if (currentTime >= new Date(prayerTimes.fajr) && currentTime < new Date(prayerTimes.dhuhr)) {
+        if (currentTime >= new Date(`1970-01-01T${prayerTimes.fajr}:00`) && currentTime < new Date(`1970-01-01T${prayerTimes.dhuhr}:00`)) {
             previousPrayer = { name: "الفجر" }; // الصلاة السابقة هي الفجر
             nextPrayer = { name: "الظهر" }; // الصلاة القادمة هي الظهر
         }
 
         // التحقق إذا كان الوقت بين الظهر والعصر
-        if (currentTime >= new Date(prayerTimes.dhuhr) && currentTime < new Date(prayerTimes.asr)) {
+        if (currentTime >= new Date(`1970-01-01T${prayerTimes.dhuhr}:00`) && currentTime < new Date(`1970-01-01T${prayerTimes.asr}:00`)) {
             previousPrayer = { name: "الظهر" }; // الصلاة السابقة هي الظهر
             nextPrayer = { name: "العصر" }; // الصلاة القادمة هي العصر
         }
