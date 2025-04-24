@@ -7,7 +7,7 @@ const getallprayerstimersRoute = async (req, res) => {
         const { city = "Cairo", country = "EG" } = req.query;
 
         const response = await axios.get(API_URL, {
-            params: { city, country, method: 2 },
+            params: { city, country, method: 5 },
         });
 
         res.status(200).json(response.data);
