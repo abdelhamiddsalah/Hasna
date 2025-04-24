@@ -20,10 +20,22 @@ const getallprayerstimersRoute = async (req, res) => {
             isha: timings.Isha,
         };
         
-        // تحويل الوقت الحالي إلى ساعات ودقائق فقط
+        // الحصول على الوقت الحالي بتوقيت مصر (UTC+2)
+        // للاختبار: استخدام وقت محدد (19:22)
+        // في بيئة الإنتاج: استخدم كود الوقت الفعلي بتوقيت مصر
+        
+        // للاختبار (الساعة 19:22):
+        const currentHour = 19;
+        const currentMinute = 22;
+        
+        /* في بيئة الإنتاج، استخدم هذا الكود للحصول على الوقت بتوقيت مصر:
         const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
+        // تحويل الوقت إلى توقيت مصر (UTC+2)
+        const cairoTime = new Date(now.getTime() + (2 * 60 + now.getTimezoneOffset()) * 60000);
+        const currentHour = cairoTime.getHours();
+        const currentMinute = cairoTime.getMinutes();
+        */
+        
         const currentTimeMinutes = currentHour * 60 + currentMinute;
         
         // تحويل وقت الصلاة إلى دقائق منذ منتصف الليل للمقارنة
@@ -71,6 +83,12 @@ const getallprayerstimersRoute = async (req, res) => {
                 nextPrayer = { name: prayers[0].name }; // والقادمة هي الفجر (من اليوم التالي)
             }
         }
+        
+        // إضافة طباعة للتشخيص
+        console.log(`الوقت الحالي: ${currentHour}:${currentMinute}`);
+        console.log(`مواقيت الصلاة: `, prayerTimes);
+        console.log(`الصلاة السابقة: ${previousPrayer.name}`);
+        console.log(`الصلاة القادمة: ${nextPrayer.name}`);
         
         // إرسال البيانات إلى العميل
         res.status(200).json({
