@@ -19,7 +19,7 @@ const getallprayerstimersRoute = async (req, res) => {
             isha: timings.Isha,
         };
 
-        // ✅ جلب التوقيت الفعلي في القاهرة
+        // ✅ الوقت الحالي في القاهرة
         const cairoTime = moment().tz("Africa/Cairo");
         const currentHour = cairoTime.hour();
         const currentMinute = cairoTime.minute();
@@ -31,33 +31,37 @@ const getallprayerstimersRoute = async (req, res) => {
         };
 
         const prayers = [
-            { name: "الفجر", time: convertToMinutes(prayerTimes.fajr) },
-            { name: "الظهر", time: convertToMinutes(prayerTimes.dhuhr) },
-            { name: "العصر", time: convertToMinutes(prayerTimes.asr) },
-            { name: "المغرب", time: convertToMinutes(prayerTimes.maghrib) },
-            { name: "العشاء", time: convertToMinutes(prayerTimes.isha) }
+            { name: "الفجر", time: convertToMinutes(prayerTimes.fajr), rawTime: prayerTimes.fajr },
+            { name: "الظهر", time: convertToMinutes(prayerTimes.dhuhr), rawTime: prayerTimes.dhuhr },
+            { name: "العصر", time: convertToMinutes(prayerTimes.asr), rawTime: prayerTimes.asr },
+            { name: "المغرب", time: convertToMinutes(prayerTimes.maghrib), rawTime: prayerTimes.maghrib },
+            { name: "العشاء", time: convertToMinutes(prayerTimes.isha), rawTime: prayerTimes.isha }
         ];
 
-        let previousPrayer = { name: "لا توجد صلاة سابقة" };
-        let nextPrayer = { name: "لا توجد صلاة قادمة" };
+        let previousPrayer = { name: "لا توجد صلاة سابقة", time: null };
+        let nextPrayer = { name: "لا توجد صلاة قادمة", time: null };
 
+        // ✅ تحديد الصلاة السابقة والقادمة
         if (currentTimeMinutes > prayers[4].time || currentTimeMinutes < prayers[0].time) {
-            previousPrayer = { name: "العشاء" };
-            nextPrayer = { name: "الفجر" };
+            previousPrayer = { name: "العشاء", time: prayerTimes.isha };
+            nextPrayer = { name: "الفجر", time: prayerTimes.fajr };
         } else {
             for (let i = 0; i < prayers.length; i++) {
                 if (currentTimeMinutes <= prayers[i].time) {
-                    nextPrayer = { name: prayers[i].name };
-                    previousPrayer = i > 0 ? { name: prayers[i - 1].name } : { name: "العشاء" };
+                    nextPrayer = { name: prayers[i].name, time: prayers[i].rawTime };
+                    previousPrayer = i > 0
+                        ? { name: prayers[i - 1].name, time: prayers[i - 1].rawTime }
+                        : { name: "العشاء", time: prayerTimes.isha };
                     break;
                 }
             }
         }
 
+        // ✅ الرد النهائي
         res.status(200).json({
             azkar: prayerTimes,
-            previousPrayer: previousPrayer.name,
-            nextPrayer: nextPrayer.name,
+            previousPrayer,
+            nextPrayer,
         });
 
     } catch (error) {
