@@ -1,3 +1,4 @@
+const moment = require('moment-timezone');
 const axios = require("axios");
 const API_URL = "http://api.aladhan.com/v1/timingsByCity";
 
@@ -5,7 +6,6 @@ const getallprayerstimersRoute = async (req, res) => {
     try {
         const { city = "Cairo", country = "EG" } = req.query;
 
-        // جلب مواقيت الصلاة من API
         const response = await axios.get(API_URL, {
             params: { city, country, method: 5 },
         });
@@ -19,19 +19,10 @@ const getallprayerstimersRoute = async (req, res) => {
             isha: timings.Isha,
         };
 
-        // الحصول على الوقت الحالي بتوقيت مصر
-        // للاختبار: الساعة 15:58
-        const currentHour = 15;
-        const currentMinute = 58;
-
-        /*
-        // في الإنتاج، استخدم هذا الكود:
-        const now = new Date();
-        const cairoTime = new Date(now.getTime() + (2 * 60 + now.getTimezoneOffset()) * 60000);
-        const currentHour = cairoTime.getHours();
-        const currentMinute = cairoTime.getMinutes();
-        */
-
+        // ✅ جلب التوقيت الفعلي في القاهرة
+        const cairoTime = moment().tz("Africa/Cairo");
+        const currentHour = cairoTime.hour();
+        const currentMinute = cairoTime.minute();
         const currentTimeMinutes = currentHour * 60 + currentMinute;
 
         const convertToMinutes = (timeString) => {
@@ -61,17 +52,7 @@ const getallprayerstimersRoute = async (req, res) => {
                     break;
                 }
             }
-
-            if (nextPrayer.name === "لا توجد صلاة قادمة") {
-                previousPrayer = { name: prayers[prayers.length - 1].name };
-                nextPrayer = { name: prayers[0].name };
-            }
         }
-
-        console.log(`الوقت الحالي: ${currentHour}:${currentMinute}`);
-        console.log(`مواقيت الصلاة: `, prayerTimes);
-        console.log(`الصلاة السابقة: ${previousPrayer.name}`);
-        console.log(`الصلاة القادمة: ${nextPrayer.name}`);
 
         res.status(200).json({
             azkar: prayerTimes,
