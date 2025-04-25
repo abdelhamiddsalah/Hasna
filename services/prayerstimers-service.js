@@ -11,6 +11,8 @@ const getallprayerstimersRoute = async (req, res) => {
         });
 
         const timings = response.data.data.timings;
+        const hijriDate = response.data.data.date.hijri;
+
         const prayerTimes = {
             fajr: timings.Fajr,
             dhuhr: timings.Dhuhr,
@@ -41,7 +43,6 @@ const getallprayerstimersRoute = async (req, res) => {
         let previousPrayer = { name: "لا توجد صلاة سابقة", time: null };
         let nextPrayer = { name: "لا توجد صلاة قادمة", time: null };
 
-        // ✅ تحديد الصلاة السابقة والقادمة
         if (currentTimeMinutes > prayers[4].time || currentTimeMinutes < prayers[0].time) {
             previousPrayer = { name: "العشاء", time: prayerTimes.isha };
             nextPrayer = { name: "الفجر", time: prayerTimes.fajr };
@@ -57,8 +58,17 @@ const getallprayerstimersRoute = async (req, res) => {
             }
         }
 
-        // ✅ الرد النهائي
+        // ✅ التاريخ الهجري
+        const hijri = {
+            date: hijriDate.date, // eg: 16-09-1446
+            weekday: hijriDate.weekday.ar, // eg: الأحد
+            day: hijriDate.day, // eg: 16
+            month: hijriDate.month.ar, // eg: رمضان
+            year: hijriDate.year // eg: 1446
+        };
+
         res.status(200).json({
+            hijri,
             azkar: prayerTimes,
             previousPrayer,
             nextPrayer,
