@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const eveningazkarSchema = new mongoose.Schema({
     id:{
-        type: String,
+        type: Number,
         required: false
     },
     name: {
