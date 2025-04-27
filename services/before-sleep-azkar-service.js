@@ -11,6 +11,10 @@ const getallbeforesleepRoute = asyncHandler(async (req, res, next) => {
 
     // جلب كل الأذكار من قاعدة البيانات
     const beforesleepazkar = await Azkar.find();
+    // ترتيب الأذكار حسب id كأرقام
+    beforesleepazkar.sort((a, b) => {
+        return Number(a.id) - Number(b.id);
+    });
 
     if (!beforesleepazkar || beforesleepazkar.length === 0) {
         return next(new Apierror("لا توجد أذكار متاحة!", 404));
