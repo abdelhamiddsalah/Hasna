@@ -29,7 +29,6 @@ const importData = async (Model, data, name) => {
         await Model.deleteMany({});
         await Model.insertMany(data);
         console.log(`✅ ${name} imported successfully`);
-        process.exit();
     } catch (error) {
         console.error(`❌ Error importing ${name}:`, error);
         process.exit(1);
@@ -55,10 +54,32 @@ const destroyAzkar = async () => {
     }
 };
 
+// ✅ دالة لاستيراد جميع البيانات دفعة واحدة
+const importAllData = async () => {
+    try {
+        await importData(MorningAzkarModel, morningAzkarData, 'Morning Azkar');
+        await importData(EveningAzkarModel, eveningAzkarData, 'Evening Azkar');
+        await importData(BeforeSleepAzkarModel, beforeSleepAzkarData, 'Before Sleep Azkar');
+        await importData(PrayerModel, prayerData, 'Prayers');
+        await importData(AfterPrayModel, afterPrayData, 'After Pray Azkar');
+        await importData(BathroomAzkarModel, bathroomAzkarData, 'Bathroom Azkar');
+        await importData(WedooAzkarModel, wedooAzkarData, 'Wedoo Azkar');
+        await importData(HadithModel, hadithData, 'Hadiths');
+
+        console.log('✅ All data imported successfully');
+        process.exit();
+    } catch (error) {
+        console.error('❌ Error importing all data:', error);
+        process.exit(1);
+    }
+};
+
 // ✅ حسب البراميتر اللي يجي من الكوماند لاين
 const arg = process.argv[2];
 
-if (arg === '-import-morning') {
+if (arg === '-import-all') {
+    importAllData();
+} else if (arg === '-import-morning') {
     importData(MorningAzkarModel, morningAzkarData, 'Morning Azkar');
 } else if (arg === '-import-evening') {
     importData(EveningAzkarModel, eveningAzkarData, 'Evening Azkar');
@@ -77,6 +98,6 @@ if (arg === '-import-morning') {
 } else if (arg === '-destroy') {
     destroyAzkar();
 } else {
-    console.log('❗ Use one of: -import-morning | -import-evening | -import-before-sleep | -import-prayers | -import-after-prays-azkar | -import-bathroom-azkar | -import-wedoo-azkar | -import-hadith | -destroy');
+    console.log('❗ Use one of: -import-all | -import-morning | -import-evening | -import-before-sleep | -import-prayers | -import-after-prays-azkar | -import-bathroom-azkar | -import-wedoo-azkar | -import-hadith | -destroy');
     process.exit();
 }
