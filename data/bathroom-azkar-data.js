@@ -12,3 +12,5 @@ const bathroomAzkarData = [
         "esnadname":"فالسنة عند الخروج من الخلاء أن يقول: غفرانك، الحمد لله الذي أذهب عني الأذى وعافاني"
     },
 ]
+
+module.exports = bathroomAzkarData;

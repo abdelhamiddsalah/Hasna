@@ -86,3 +86,5 @@ const wedooAzkarData = [
         "count": 1
     }
 ]
+
+module.exports = wedooAzkarData;
