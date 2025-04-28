@@ -1,12 +1,27 @@
-const mongoose = require("mongoose");
+// models/hadith-model.js
+
+const mongoose = require('mongoose');
 
 const hadithSchema = new mongoose.Schema({
-  text: { type: String, required: true }, // نص الحديث
-  explanation: { type: String, required: true }, // تفسير الحديث
-  source: { type: String, required: true }, // مصدر الحديث (البخاري، مسلم، إلخ)
-  dateAdded: { type: Date, default: Date.now }, // تاريخ الإدراج
-});
+    id: {
+        type: Number,
+        required: false,
+        unique: true
+    },
+    hadith: {
+        type: String,
+        required: false
+    },
+    importance: {
+        type: String,
+        required: false
+    },
+    fiqh: {
+        type: String,
+        required: false
+    },
+}, { timestamps: true });
 
-const Hadith = mongoose.model("Hadith", hadithSchema);
+module.exports = mongoose.model('Hadith', hadithSchema,"Hadith");
 
-module.exports = Hadith;
+

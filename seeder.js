@@ -8,77 +8,35 @@ const EveningAzkarModel = require('./models/evening-azkar');
 const BeforeSleepAzkarModel = require('./models/before-sleep');
 const PrayerModel = require('./models/prayers-model');
 const AfterPrayModel = require('./models/after-pray-model');
+const BathroomAzkarModel = require('./models/bathroom-azkar-model');
+const WedooAzkarModel = require('./models/wedoo-azkar-model');
+const HadithModel = require('./models/hadith-model'); // ✨ عدلت الاسم هنا
 
 const morningAzkarData = require('./data/morning-azkar');
 const eveningAzkarData = require('./data/evening-azkar');
 const beforeSleepAzkarData = require('./data/before-sleep-azkar');
 const prayerData = require('./data/prayers-data');
 const afterPrayData = require('./data/after-pray-data');
-
+const bathroomAzkarData = require('./data/bathroom-azkar-data');
+const wedooAzkarData = require('./data/wedoo-azkar-data');
+const hadithData = require('./data/hadiths');
 
 connectToDb();
 
-const importMorningAzkar = async () => {
+// ✅ عملت دالة عامة تستورد أي بيانات
+const importData = async (Model, data, name) => {
     try {
-        await MorningAzkarModel.deleteMany({});
-        await MorningAzkarModel.insertMany(morningAzkarData);
-        console.log('✅ Morning Azkar imported successfully');
+        await Model.deleteMany({});
+        await Model.insertMany(data);
+        console.log(`✅ ${name} imported successfully`);
         process.exit();
     } catch (error) {
-        console.error('❌ Error importing morning azkar:', error);
+        console.error(`❌ Error importing ${name}:`, error);
         process.exit(1);
     }
 };
 
-const importEveningAzkar = async () => {
-    try {
-        await EveningAzkarModel.deleteMany({});
-        await EveningAzkarModel.insertMany(eveningAzkarData);
-        console.log('✅ Evening Azkar imported successfully');
-        process.exit();
-    } catch (error) {
-        console.error('❌ Error importing evening azkar:', error);
-        process.exit(1);
-    }
-};
-
-const importBeforeSleepAzkar = async () => {
-    try {
-        await BeforeSleepAzkarModel.deleteMany({});
-        await BeforeSleepAzkarModel.insertMany(beforeSleepAzkarData);
-        console.log('✅ Before Sleep Azkar imported successfully');
-        process.exit();
-    } catch (error) {
-        console.error('❌ Error importing before sleep azkar:', error);
-        process.exit(1);
-    }
-};
-
-const importPrayers = async () => {
-    try {
-        await PrayerModel.deleteMany({});
-        await PrayerModel.insertMany(prayerData);
-        console.log('✅ Before Sleep Azkar imported successfully');
-        process.exit();
-    } catch (error) {
-        console.error('❌ Error importing before sleep azkar:', error);
-        process.exit(1);
-    }
-};
-
-const importAfterprayesazkar = async () => {
-    try {
-        await AfterPrayModel.deleteMany({});
-        await AfterPrayModel.insertMany(afterPrayData);
-        console.log('✅ Before Sleep Azkar imported successfully');
-        process.exit();
-    } catch (error) {
-        console.error('❌ Error importing before sleep azkar:', error);
-        process.exit(1);
-    }
-};
-
-
+// ✅ عملت دالة تدمر الكل
 const destroyAzkar = async () => {
     try {
         await MorningAzkarModel.deleteMany({});
@@ -86,32 +44,39 @@ const destroyAzkar = async () => {
         await BeforeSleepAzkarModel.deleteMany({});
         await PrayerModel.deleteMany({});
         await AfterPrayModel.deleteMany({});
-        console.log('🗑️ All Azkar destroyed successfully');
+        await BathroomAzkarModel.deleteMany({});
+        await WedooAzkarModel.deleteMany({});
+        await HadithModel.deleteMany({});
+        console.log('🗑️ All Azkar and Hadiths destroyed successfully');
         process.exit();
     } catch (error) {
-        console.error('❌ Error destroying azkar:', error);
+        console.error('❌ Error destroying data:', error);
         process.exit(1);
     }
 };
 
+// ✅ حسب البراميتر اللي يجي من الكوماند لاين
 const arg = process.argv[2];
 
 if (arg === '-import-morning') {
-    importMorningAzkar();
+    importData(MorningAzkarModel, morningAzkarData, 'Morning Azkar');
 } else if (arg === '-import-evening') {
-    importEveningAzkar();
+    importData(EveningAzkarModel, eveningAzkarData, 'Evening Azkar');
 } else if (arg === '-import-before-sleep') {
-    importBeforeSleepAzkar();
-} 
-else if (arg === '-import-prayers') {
-    importPrayers();
+    importData(BeforeSleepAzkarModel, beforeSleepAzkarData, 'Before Sleep Azkar');
+} else if (arg === '-import-prayers') {
+    importData(PrayerModel, prayerData, 'Prayers');
 } else if (arg === '-import-after-prays-azkar') {
-    importAfterprayesazkar();
-} 
-
-else if (arg === '-destroy') {
+    importData(AfterPrayModel, afterPrayData, 'After Pray Azkar');
+} else if (arg === '-import-bathroom-azkar') {
+    importData(BathroomAzkarModel, bathroomAzkarData, 'Bathroom Azkar');
+} else if (arg === '-import-wedoo-azkar') {
+    importData(WedooAzkarModel, wedooAzkarData, 'Wedoo Azkar');
+} else if (arg === '-import-hadith') {
+    importData(HadithModel, hadithData, 'Hadiths');
+} else if (arg === '-destroy') {
     destroyAzkar();
 } else {
-    console.log('❗ Use one of: -import-morning | -import-evening | -import-before-sleep | -destroy');
+    console.log('❗ Use one of: -import-morning | -import-evening | -import-before-sleep | -import-prayers | -import-after-prays-azkar | -import-bathroom-azkar | -import-wedoo-azkar | -import-hadith | -destroy');
     process.exit();
 }
