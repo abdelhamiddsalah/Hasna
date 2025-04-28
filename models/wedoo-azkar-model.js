@@ -21,6 +21,10 @@ const wedooAzkarSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    audioUrl: {
+        type: String,
+        required: false
+    },
 });
 
 module.exports = mongoose.model('wedooAzkar', wedooAzkarSchema, 'wedooAzkar');

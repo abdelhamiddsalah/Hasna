@@ -20,6 +20,10 @@ const hadithSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    audioUrl: {
+        type: String, // حفظ الرابط فقط
+        required: false
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Hadith', hadithSchema,"Hadith");

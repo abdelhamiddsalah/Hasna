@@ -12,7 +12,11 @@ const prayersSchema = new mongoose.Schema({
     souraname: {
         type: String,
         required: false
-    }
+    },
+     audioUrl: {
+        type: String, // حفظ الرابط فقط
+        required: false
+    },
 });
 
 module.exports = mongoose.model('prayers', prayersSchema, 'prayers');
